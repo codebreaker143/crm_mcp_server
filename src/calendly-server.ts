@@ -58,15 +58,15 @@ export class CalendlyMCPServer {
           case 'list_event_types':
             return await this.listEventTypes();
           case 'get_event_type':
-            return await this.getEventType(args.eventTypeUri as string);
+            return await this.getEventType((args as any).eventTypeUri as string);
           case 'get_scheduling_link':
-            return await this.getSchedulingLink(args.eventTypeUri as string);
+            return await this.getSchedulingLink((args as any).eventTypeUri as string);
           case 'list_scheduled_events':
-            return await this.listScheduledEvents(args);
+            return await this.listScheduledEvents(args as any);
           case 'get_event_invitee':
-            return await this.getEventInvitee(args.inviteeUri as string);
+            return await this.getEventInvitee((args as any).inviteeUri as string);
           case 'cancel_event':
-            return await this.cancelEvent(args.eventUri as string, args.reason as string);
+            return await this.cancelEvent((args as any).eventUri as string, (args as any).reason as string);
           default:
             throw new Error(`Unknown tool: ${name}`);
         }
@@ -200,7 +200,7 @@ export class CalendlyMCPServer {
 
   private async listEventTypes() {
     try {
-      const data = await this.makeCalendlyRequest(
+      const data: any = await this.makeCalendlyRequest(
         `/event_types?organization=${encodeURIComponent(this.organizationUri)}`
       );
 
@@ -229,7 +229,7 @@ export class CalendlyMCPServer {
 
   private async getEventType(eventTypeUri: string) {
     try {
-      const data = await this.makeCalendlyRequest(`/event_types/${encodeURIComponent(eventTypeUri)}`);
+      const data: any = await this.makeCalendlyRequest(`/event_types/${encodeURIComponent(eventTypeUri)}`);
 
       const eventType = {
         uri: data.resource.uri,
@@ -258,7 +258,7 @@ export class CalendlyMCPServer {
 
   private async getSchedulingLink(eventTypeUri: string) {
     try {
-      const data = await this.makeCalendlyRequest(`/event_types/${encodeURIComponent(eventTypeUri)}`);
+      const data: any = await this.makeCalendlyRequest(`/event_types/${encodeURIComponent(eventTypeUri)}`);
 
       return {
         content: [
@@ -276,7 +276,7 @@ export class CalendlyMCPServer {
   private async listScheduledEvents(filters: any) {
     try {
       // Get current user to filter their events
-      const userData = await this.makeCalendlyRequest('/users/me');
+      const userData: any = await this.makeCalendlyRequest('/users/me');
       const userUri = userData.resource.uri;
 
       let endpoint = `/scheduled_events?user=${encodeURIComponent(userUri)}`;
@@ -291,7 +291,7 @@ export class CalendlyMCPServer {
         endpoint += `&max_start_time=${encodeURIComponent(filters.maxStartTime)}`;
       }
 
-      const data = await this.makeCalendlyRequest(endpoint);
+      const data: any = await this.makeCalendlyRequest(endpoint);
 
       const events = data.collection.map((event: any) => ({
         uri: event.uri,
@@ -319,7 +319,7 @@ export class CalendlyMCPServer {
 
   private async getEventInvitee(inviteeUri: string) {
     try {
-      const data = await this.makeCalendlyRequest(`/scheduled_events/${encodeURIComponent(inviteeUri)}/invitees`);
+      const data: any = await this.makeCalendlyRequest(`/scheduled_events/${encodeURIComponent(inviteeUri)}/invitees`);
 
       const invitees = data.collection.map((invitee: any) => ({
         uri: invitee.uri,
