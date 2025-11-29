@@ -50,7 +50,8 @@ export class CalendlyMCPServer {
 
     // Handle tool calls
     this.server.setRequestHandler(CallToolRequestSchema, async (request) => {
-      const { name, arguments: args } = request.params;
+      const { name } = request.params;
+      const args: any = request.params.arguments ?? {};
 
       try {
         switch (name) {
@@ -178,7 +179,7 @@ export class CalendlyMCPServer {
     ];
   }
 
-  private async makeCalendlyRequest(endpoint: string, options: any = {}) {
+  private async makeCalendlyRequest(endpoint: string, options: any = {}): Promise<any> {
     const url = `${CALENDLY_API_BASE}${endpoint}`;
     const response = await fetch(url, {
       ...options,

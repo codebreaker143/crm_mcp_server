@@ -60,7 +60,8 @@ export class GoogleSheetsMCPServer {
 
     // Handle tool calls
     this.server.setRequestHandler(CallToolRequestSchema, async (request) => {
-      const { name, arguments: args } = request.params;
+      const { name } = request.params;
+      const args: any = request.params.arguments ?? {};
 
       try {
         switch (name) {
