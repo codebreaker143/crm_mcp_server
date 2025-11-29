@@ -65,13 +65,13 @@ export class GoogleSheetsMCPServer {
       try {
         switch (name) {
           case 'add_customer_record':
-            return await this.addCustomerRecord(args as CustomerRecord);
+            return await this.addCustomerRecord(args as any as CustomerRecord);
           case 'get_customer_record':
-            return await this.getCustomerRecord(args.id as string);
+            return await this.getCustomerRecord((args as any).id as string);
           case 'update_customer_record':
-            return await this.updateCustomerRecord(args as CustomerRecord & { id: string });
+            return await this.updateCustomerRecord(args as any as CustomerRecord & { id: string });
           case 'search_customer_records':
-            return await this.searchCustomerRecords(args);
+            return await this.searchCustomerRecords(args as any);
           case 'list_all_customers':
             return await this.listAllCustomers();
           case 'initialize_sheet':

@@ -129,6 +129,21 @@ Or run in development mode with watch:
 npm run dev
 ```
 
+### Viewing Connection Details
+
+When you start the server, it automatically displays detailed connection information:
+
+```bash
+npm start
+```
+
+This will show:
+- MCP server configuration
+- Google Sheets credentials and spreadsheet details
+- Calendly API configuration
+- Complete MCP client configuration examples
+- Integration options for OpenAI and other platforms
+
 ### Configuring in Claude Desktop
 
 Add to your Claude Desktop configuration file:
@@ -160,6 +175,16 @@ Add to your Claude Desktop configuration file:
   }
 }
 ```
+
+### Integration with OpenAI Agent Builder
+
+This MCP server uses stdio transport and is designed for MCP-compatible clients. For OpenAI Agent Builder integration, see **[OPENAI_INTEGRATION.md](./OPENAI_INTEGRATION.md)** which includes:
+
+- How to extract and use credentials with OpenAI custom actions
+- Direct API integration examples for Google Sheets and Calendly
+- HTTP wrapper implementation guide
+- Complete OpenAPI schemas for OpenAI actions
+- Security best practices
 
 ## Available Tools
 

@@ -8,8 +8,87 @@ dotenv.config();
 
 const SERVER_TYPE = process.env.MCP_SERVER_TYPE || 'all';
 
+function logConnectionDetails() {
+  console.error('\n========================================');
+  console.error('MCP SERVER CONNECTION DETAILS');
+  console.error('========================================\n');
+
+  console.error(`Server Type: ${SERVER_TYPE}`);
+  console.error(`Protocol: MCP over stdio`);
+  console.error(`Node Path: ${process.execPath}`);
+  console.error(`Server Path: ${process.argv[1]}`);
+
+  if (SERVER_TYPE === 'sheets' || SERVER_TYPE === 'all') {
+    console.error('\n--- Google Sheets Configuration ---');
+    const credentialsPath = process.env.GOOGLE_SHEETS_CREDENTIALS_PATH;
+    const spreadsheetId = process.env.GOOGLE_SHEETS_SPREADSHEET_ID;
+
+    if (credentialsPath && spreadsheetId) {
+      console.error(`Credentials Path: ${credentialsPath}`);
+      console.error(`Spreadsheet ID: ${spreadsheetId}`);
+      console.error(`Spreadsheet URL: https://docs.google.com/spreadsheets/d/${spreadsheetId}/edit`);
+
+      // Try to read and display service account email
+      try {
+        const fs = require('fs');
+        const credentials = JSON.parse(fs.readFileSync(credentialsPath, 'utf-8'));
+        console.error(`Service Account Email: ${credentials.client_email}`);
+        console.error(`Project ID: ${credentials.project_id}`);
+      } catch (e) {
+        console.error('Could not read credentials file details');
+      }
+    }
+  }
+
+  if (SERVER_TYPE === 'calendly' || SERVER_TYPE === 'all') {
+    console.error('\n--- Calendly Configuration ---');
+    const apiToken = process.env.CALENDLY_API_TOKEN;
+    const organizationUri = process.env.CALENDLY_ORGANIZATION_URI;
+
+    if (apiToken && organizationUri) {
+      // Show masked token for security
+      const maskedToken = apiToken.substring(0, 8) + '...' + apiToken.substring(apiToken.length - 4);
+      console.error(`API Token: ${maskedToken} (masked)`);
+      console.error(`Organization URI: ${organizationUri}`);
+      console.error(`API Base URL: https://api.calendly.com`);
+    }
+  }
+
+  console.error('\n--- MCP Client Configuration Example ---');
+  console.error('For Claude Desktop (claude_desktop_config.json):');
+  console.error(JSON.stringify({
+    mcpServers: {
+      "crm-server": {
+        command: "node",
+        args: [process.argv[1]],
+        env: {
+          MCP_SERVER_TYPE: SERVER_TYPE,
+          ...(process.env.GOOGLE_SHEETS_CREDENTIALS_PATH && {
+            GOOGLE_SHEETS_CREDENTIALS_PATH: process.env.GOOGLE_SHEETS_CREDENTIALS_PATH,
+            GOOGLE_SHEETS_SPREADSHEET_ID: process.env.GOOGLE_SHEETS_SPREADSHEET_ID
+          }),
+          ...(process.env.CALENDLY_API_TOKEN && {
+            CALENDLY_API_TOKEN: process.env.CALENDLY_API_TOKEN,
+            CALENDLY_ORGANIZATION_URI: process.env.CALENDLY_ORGANIZATION_URI
+          })
+        }
+      }
+    }
+  }, null, 2));
+
+  console.error('\n--- OpenAI Integration ---');
+  console.error('NOTE: This is an MCP server using stdio transport.');
+  console.error('OpenAI Agent Builder does not natively support MCP servers.');
+  console.error('See OPENAI_INTEGRATION.md for integration options.\n');
+
+  console.error('========================================\n');
+}
+
 async function main() {
   try {
+    // Log connection details at startup
+    logConnectionDetails();
+
     if (SERVER_TYPE === 'sheets' || SERVER_TYPE === 'all') {
       const credentialsPath = process.env.GOOGLE_SHEETS_CREDENTIALS_PATH;
       const spreadsheetId = process.env.GOOGLE_SHEETS_SPREADSHEET_ID;
